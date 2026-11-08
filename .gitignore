@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Environment variables
+.env
+
+# Spark
+spark-warehouse/
+
+# Temporary files
+*.log
+.DS_Store
+
+# Raw data
+data/raw/
+# IDE
+.idea/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Local generated data
+data/processed/
+data/metadata.csv
+data/analytics/*.parquet
+
+# Keep dashboard CSV files
+!data/analytics/dashboard/
+!data/analytics/dashboard/*.csv
