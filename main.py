@@ -77,7 +77,16 @@ def main():
 
         df = transform_markets(loaded_markets)
 
-        logger.info("Transformed %s records", len(df))
+        if df.empty:
+            raise ValueError("Transformation produced an empty DataFrame")
+
+        if df["market_id"].isna().any():
+            raise ValueError("Transformed data contains missing market IDs")
+
+        if df["probability"].isna().any():
+            raise ValueError("Transformed data contains missing probabilities")
+
+        logger.info("Transformed %s valid records", len(df))
 
         # STEP 5: Save processed data
         logger.info("STEP 5: Saving processed data")
