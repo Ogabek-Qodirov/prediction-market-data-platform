@@ -13,6 +13,17 @@ REQUIRED_COLUMNS = [
 
 def transform_markets(markets):
 
+    # 0. Handle empty input
+    if not markets:
+        return pd.DataFrame(columns=[
+            "market_id",
+            "question",
+            "probability",
+            "volume",
+            "created_at",
+            "is_resolved"
+        ])
+
     df = pd.DataFrame(markets)
 
     # 1. Check required columns
@@ -58,10 +69,7 @@ def transform_markets(markets):
     # 6. Remove invalid records
     df = df.dropna(subset=["market_id", "probability"])
 
-    # Probability must be between 0 and 1
-    df = df[
-        df["probability"].between(0, 1)
-    ]
+    df = df[df["probability"].between(0, 1)]
 
     # 7. Remove duplicates
     df = df.drop_duplicates(
