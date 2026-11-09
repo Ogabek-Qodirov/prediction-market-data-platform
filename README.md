@@ -1,73 +1,123 @@
 # Prediction Market Data Engineering Platform
 
-An end-to-end Data Engineering project that collects prediction market data from the Manifold Markets API, stores historical snapshots, processes data using PySpark, and delivers analytical insights through interactive dashboards.
+An end-to-end Data Engineering project that collects, stores, transforms, and analyzes prediction market data from the Manifold Markets API. The platform uses Python, Pandas, PySpark, and PostgreSQL-independent local storage to build a historical data pipeline and interactive analytics dashboards.
+
+[![Python](https://img.shields.io/badge/Python-3.13-blue?logo=python)](https://www.python.org/)
+[![PySpark](https://img.shields.io/badge/PySpark-4.3-orange?logo=apachespark)](https://spark.apache.org/)
+[![Pandas](https://img.shields.io/badge/Pandas-Data%20Processing-150458?logo=pandas)](https://pandas.pydata.org/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-FF4B4B?logo=streamlit)](https://streamlit.io/)
+[![Tests](https://img.shields.io/badge/Tests-21%20Passing-success)](https://pytest.org/)
+
+---
 
 ## Project Overview
 
-Prediction markets allow users to trade on the outcomes of future events. This project builds a local data platform to collect, transform, analyze, and visualize prediction market data.
+This project demonstrates how to build a complete batch-oriented data pipeline using publicly available prediction market data.
 
-The platform captures market information over time, making it possible to explore market activity and analyze changes in predicted probabilities.
+The pipeline retrieves market information through the Manifold Markets API, stores raw snapshots locally, transforms and validates the data, processes historical records using PySpark, and generates analytical datasets for visualization.
+
+The project also includes a Streamlit dashboard and a Looker Studio report to explore market statistics and historical probability changes.
+
+### Key Objectives
+
+- Build an end-to-end data ingestion pipeline.
+- Work with REST APIs and JSON responses.
+- Implement a local data lake structure.
+- Transform and validate raw datasets.
+- Process historical data using PySpark.
+- Perform analytical queries and aggregations.
+- Build interactive dashboards.
+- Implement automated tests and pipeline logging.
+- Apply Git version control practices.
+
+---
 
 ## Architecture
 
-```text
-Manifold Markets API
-        |
-        v
-   Data Extraction
-        |
-        v
-    Raw Data Lake
-    (JSON Snapshots)
-        |
-        v
- Data Transformation
-   (Pandas)
-        |
-        v
- Processed Data
-    (Parquet)
-        |
-        v
-  Data Processing
-    (PySpark)
-        |
-        v
- Analytical Datasets
-       (CSV)
-        |
-        +------------------+
-        |                  |
-        v                  v
- Streamlit Dashboard   Looker Studio
+The platform follows a modular ETL architecture.
+
+```mermaid
+flowchart TD
+    A["Manifold Markets API"] --> B["Data Extraction<br/>Python + Requests"]
+    B --> C["Raw Data Storage<br/>JSON Snapshots"]
+    C --> D["Data Loading"]
+    D --> E["Transformation<br/>Pandas"]
+    E --> F["Data Validation"]
+    F --> G["Processed Data<br/>Parquet"]
+    G --> H["PySpark Analytics"]
+    H --> I["Historical Analysis"]
+    H --> J["Dashboard CSV Exports"]
+    J --> K["Streamlit Dashboard"]
+    J --> L["Looker Studio"]
+    M["Python Orchestration"] --> B
+    M --> H
+    N["Logging + Pytest"] -.-> M
 ```
 
-## Technologies Used
+### Pipeline Workflow
 
-| Technology | Purpose |
+1. **Extraction:** Retrieve prediction market records from the Manifold Markets API.
+2. **Raw Storage:** Save API responses as timestamped JSON snapshots.
+3. **Loading:** Read and validate stored JSON data.
+4. **Transformation:** Clean, normalize, and prepare data using Pandas.
+5. **Data Quality:** Check required fields, missing values, duplicates, and probability ranges.
+6. **Processed Storage:** Save transformed datasets in Parquet format.
+7. **Analytics:** Use PySpark for aggregations and historical analysis.
+8. **Export:** Generate CSV datasets for dashboard consumption.
+9. **Visualization:** Present analytical results through Streamlit and Looker Studio.
+
+---
+
+## Technology Stack
+
+| Category | Technologies |
 |---|---|
-| Python | Main programming language |
-| Manifold Markets API | Data source |
-| Pandas | Data transformation |
-| PyArrow | Parquet storage |
-| PySpark | Distributed data processing and analytics |
-| PostgreSQL | Not currently used in this project |
-| Streamlit | Interactive dashboard |
-| Looker Studio | Business intelligence and visualization |
-| Git & GitHub | Version control |
+| Programming Language | Python |
+| API Integration | REST API, Requests, JSON |
+| Data Processing | Pandas, NumPy |
+| Big Data Processing | Apache Spark, PySpark |
+| Storage Formats | JSON, Parquet, CSV |
+| Data Visualization | Streamlit, Looker Studio |
+| Testing | Pytest |
+| Logging | Python Logging |
+| Version Control | Git, GitHub |
 
-## Project Features
+---
 
-- Extracts prediction market data through the Manifold Markets API.
-- Supports API pagination and data validation.
-- Stores timestamped JSON snapshots in a local data lake.
-- Transforms raw data using Pandas.
-- Stores processed datasets in Parquet format.
-- Processes market data using PySpark.
-- Performs historical probability change analysis.
-- Generates analytical CSV datasets.
-- Provides an interactive Streamlit dashboard.
-- Supports Looker Studio reporting through CSV uploads.
+## Dashboard Preview
+
+### Streamlit Dashboard
+
+The Streamlit dashboard provides an interactive interface for exploring prediction market data.
+
+Features include:
+
+- Key market statistics and KPIs.
+- Probability distribution analysis.
+- Top markets by trading volume.
+- Historical probability changes.
+- Market Explorer with filtering and search.
+- CSV data downloads.
+
+![Streamlit Dashboard](docs/images/streamlit-dashboard.png)
+
+### Looker Studio Report
+
+The Looker Studio report provides an additional business intelligence view of the processed datasets.
+
+It includes:
+
+- Total market statistics.
+- Average probability.
+- Average market volume.
+- Probability distribution.
+- Top markets by volume.
+
+![Looker Studio Dashboard](docs/images/looker-studio-dashboard.png)
+
+> Add your actual dashboard screenshots to `docs/images/` using the filenames shown above.
+
+---
 
 ## Project Structure
 
@@ -76,36 +126,72 @@ prediction-market-data-platform/
 │
 ├── data/
 │   ├── raw/
+│   │   └── YYYY/MM/
+│   │       └── markets_TIMESTAMP.json
+│   │
 │   ├── processed/
-│   └── analytics/
-│       └── dashboard/
+│   │   └── markets_TIMESTAMP.parquet
+│   │
+│   ├── analytics/
+│   │   └── dashboard/
+│   │       ├── all_markets.csv
+│   │       ├── historical_probability_changes.csv
+│   │       ├── market_summary.csv
+│   │       ├── probability_distribution.csv
+│   │       └── top_markets.csv
+│   │
+│   └── metadata.csv
+│
+├── docs/
+│   └── images/
+│       ├── streamlit-dashboard.png
+│       └── looker-studio-dashboard.png
+│
+├── logs/
+│   └── pipeline.log
 │
 ├── src/
 │   ├── extraction/
+│   │   └── mainfold_api.py
+│   │
 │   ├── storage/
+│   │   └── local_storage.py
+│   │
 │   ├── transformation/
+│   │   └── transform_markets.py
+│   │
 │   └── processing/
+│       └── spark_processor.py
 │
-├── app.py
+├── tests/
+│   ├── test_local_storage.py
+│   ├── test_mainfold_api.py
+│   └── test_transform_markets.py
+│
 ├── main.py
-├── api_test.py
-├── check_dashboard.py
+├── streamlit_app.py
 ├── requirements.txt
 ├── .gitignore
 └── README.md
 ```
 
+---
+
 ## Getting Started
 
-### 1. Clone the repository
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/Ogabek-Qodirov/prediction-market-data-platform.git
+```
 
+Navigate into the project directory:
+
+```bash
 cd prediction-market-data-platform
 ```
 
-### 2. Create a virtual environment
+### 2. Create a Virtual Environment
 
 ```bash
 python -m venv .venv
@@ -114,92 +200,145 @@ python -m venv .venv
 Activate it on Windows:
 
 ```powershell
-.venv\Scripts\activate
+.venv\Scripts\Activate.ps1
 ```
 
-### 3. Install dependencies
+### 3. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Configure Java
+Make sure Java is installed and configured if you intend to run the PySpark analytics component.
 
-PySpark requires Java. This project was developed using Java 17.
-
-Make sure Java 17 is installed and `JAVA_HOME` is configured correctly.
-
-### 5. Run the data pipeline
+### 4. Run the Pipeline
 
 ```bash
 python main.py
 ```
 
-### 6. Launch the Streamlit dashboard
+The main orchestration script executes the following operations:
 
-```bash
-streamlit run app.py
+- Extract market data.
+- Save raw API responses.
+- Load and validate raw records.
+- Transform the data.
+- Save processed Parquet files.
+- Execute PySpark analytics.
+- Export dashboard datasets.
+
+Pipeline logs are written to:
+
+```text
+logs/pipeline.log
 ```
 
-Open the local URL displayed in your terminal to access the dashboard.
+### 5. Run the Streamlit Dashboard
 
-## Dashboards
+```bash
+streamlit run streamlit_app.py
+```
 
-### Streamlit
+Streamlit will start a local web server and provide a URL to access the dashboard.
 
-The Streamlit dashboard provides:
+### 6. Run Automated Tests
 
-- Total market statistics.
-- Average market probability.
-- Average trading volume.
-- Probability distribution.
-- Top markets by trading volume.
-- Market search and filtering.
-- Historical probability analysis when historical records are available.
+```bash
+pytest -v
+```
 
-### Looker Studio
+**Current test coverage includes:**
 
-Looker Studio is used to create business intelligence reports from exported CSV datasets.
+- API response validation.
+- API extraction behavior.
+- Data transformation.
+- Handling empty datasets.
+- Duplicate records.
+- Missing values and invalid probabilities.
+- Local JSON and Parquet storage.
 
-The integration currently uses manual CSV uploads.
+Current test result: **21 passing tests**.
 
-## Data Storage
+---
 
-The project uses a local data lake architecture:
+## Data Quality and Reliability
 
-- **Raw layer:** Original API responses stored as timestamped JSON snapshots.
-- **Processed layer:** Cleaned and transformed Parquet datasets.
-- **Analytics layer:** CSV datasets prepared for dashboards and reporting.
+Data quality is an important part of this platform.
 
-## Historical Analysis
+The pipeline implements validation checks to improve data reliability:
 
-Historical snapshots allow the project to compare market probabilities over time.
+- Validates API response structure.
+- Checks required market fields.
+- Handles missing values.
+- Removes duplicate market records.
+- Validates probability values between 0 and 1.
+- Prevents empty transformed datasets from being saved.
+- Checks for missing market IDs and probabilities.
+- Monitors records removed during transformation.
+- Logs pipeline execution and exceptions.
 
-The analysis uses SQL window functions, including `LAG()`, to calculate:
+The pipeline also provides retry handling for API requests.
 
-- Previous probability.
-- Current probability.
-- Probability changes.
-- Percentage-point differences.
-- Significant increases and decreases.
+---
+
+## Historical Data Analysis
+
+Instead of keeping only the latest market state, the platform stores timestamped snapshots.
+
+This makes it possible to analyze how prediction probabilities change over time.
+
+Historical analysis can help answer questions such as:
+
+- Which markets experienced the largest probability changes?
+- How do market probabilities evolve over time?
+- Which markets have the highest trading volume?
+- How does the distribution of market probabilities change?
+
+---
 
 ## Future Improvements
 
-- Implement automated pipeline orchestration with Apache Airflow.
-- Add automated data quality tests.
-- Improve historical trend analysis.
-- Introduce more advanced analytical metrics.
-- Improve dashboard reporting.
-- Add automated pipeline monitoring and logging.
+Potential future enhancements include:
+
+- Automated scheduled pipeline execution.
+- More comprehensive data quality monitoring.
+- Incremental data processing.
+- Database integration.
+- Cloud-based data lake storage.
+- CI/CD workflow improvements.
+- More advanced historical trend analysis.
+
+These are future development opportunities, not currently implemented features.
+
+---
+
+## What I Learned
+
+Through this project, I gained practical experience with:
+
+- Designing modular ETL pipelines.
+- Integrating REST APIs.
+- Working with JSON, CSV, and Parquet formats.
+- Building a local data lake.
+- Processing datasets with Pandas and PySpark.
+- Performing historical data analysis.
+- Implementing data validation and automated tests.
+- Creating interactive analytical dashboards.
+- Implementing logging and error handling.
+- Managing project development with Git and GitHub.
+
+---
 
 ## Author
 
 **Og'abek Qodirov**
 
-Information Systems and Technologies Student | Aspiring Data Engineer
+Information Systems and Technologies Student  
+Aspiring Junior Data Engineer
 
 - GitHub: [Ogabek-Qodirov](https://github.com/Ogabek-Qodirov)
+- Project Repository: [Prediction Market Data Platform](https://github.com/Ogabek-Qodirov/prediction-market-data-platform)
 
 ---
 
-*This project is developed as part of a practical Data Engineering learning and portfolio journey.*
+*This project was developed as part of my Data Engineering learning journey, with a focus on practical ETL development, data processing, historical analytics, and data visualization.*
